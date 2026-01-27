@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10)
 project(CoroBus CXX)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -14,7 +14,7 @@ add_compile_options(${COMMON_FLAGS})
 
 option(ENABLE_LEAK_CHECKS
     "Enable memory leak checks with heap_help"
-    OFF)
+    ON)
 
 option(ENABLE_GLOB_SEARCH
     "Enable compilation of all the files, not just the preselected ones"
@@ -26,7 +26,7 @@ set(UTILS_SOURCES ${UTILS_DIR}/unit.cpp)
 include_directories(${UTILS_DIR})
 
 if(ENABLE_LEAK_CHECKS)
-    list(APPEND UTILS_SOURCES ${UTILS_DIR}/heap_help/heap_help.cpp)
+    list(APPEND UTILS_SOURCES ${UTILS_DIR}/heap_help/heapb_help.cpp)
     include_directories(${UTILS_DIR}/heap_help)
 endif()
 

@@ -11,6 +11,7 @@ cmake_install.cmake
 CTestTestfile.cmake
 install_manifest.txt
 *.cmake.user
+.cache
 
 *.o
 *.obj
