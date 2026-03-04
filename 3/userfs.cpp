@@ -1,6 +1,7 @@
 #include "userfs.h"
 #include <cstddef>
 #include <string>
+#include <utility>
 #include <vector>
 #include <unordered_map>
 #include <cstring>
@@ -30,7 +31,7 @@ struct file {
     bool is_deleted = false;
     
     /** 
-	* Much better performance compared to rlist in struct block.
+	* Better performance compared to rlist in struct block.
 	* More allocations and memory consumption though.
 	*/
     std::vector<block*> blocks;
@@ -54,8 +55,7 @@ struct filedesc {
 */
 static std::unordered_map<std::string, file*> all_files;
 
-/** FD 0 reserved */
-static std::vector<filedesc*> file_descriptors = {nullptr};
+static std::vector<filedesc*> file_descriptors;
 
 static bool is_invalid_fd(int fd) {
     return fd <= 0 || fd >= (int)file_descriptors.size() || file_descriptors[fd] == nullptr;
@@ -91,6 +91,9 @@ int ufs_open(const char *filename, int flags) {
     target->refs++;
 
     int fd = -1;
+
+    /** FD 0 reserved */
+    if (file_descriptors.empty()) file_descriptors.push_back(nullptr);
 
     for (size_t i = 1; i < file_descriptors.size(); ++i) {
         if (file_descriptors[i] == nullptr) {
@@ -275,8 +278,6 @@ void ufs_destroy(void) {
 	std::vector<filedesc*> tmp;
 	std::swap(tmp, file_descriptors);
 
-    for (auto const& [name, f] : all_files) {
-        delete f;
-    }
-    all_files.clear();
+    std::unordered_map<std::string, file*> mtmp;
+    std::swap(mtmp, all_files);
 }
