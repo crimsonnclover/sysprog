@@ -278,6 +278,10 @@ void ufs_destroy(void) {
 	std::vector<filedesc*> tmp;
 	std::swap(tmp, file_descriptors);
 
+    for (auto& [name, f] : all_files) {
+        delete f;
+    }
+
     std::unordered_map<std::string, file*> mtmp;
     std::swap(mtmp, all_files);
 }
